@@ -61,7 +61,7 @@ function SessionHandler(db) {
             var invalidPasswordErrorMessage = "Invalid password";
             if (err) {
                 if (err.noSuchUser) {
-                    console.log('Error: attempt to login with invalid user: ', userName);
+                    console.log('Error: attempt to login with invalid user: %s', ESAPI.encoder().encodeForHTML(userName));
 
                     // Fix for A1 - 3 Log Injection - encode/sanitize input for CRLF Injection
                     // that could result in log forging:
@@ -141,7 +141,7 @@ function SessionHandler(db) {
         var FNAME_RE = /^.{1,100}$/;
         var LNAME_RE = /^.{1,100}$/;
         var EMAIL_RE = /^[\S]+@[\S]+\.[\S]+$/;
-        var PASS_RE = /^.{1,20}$/;
+        var PASS_RE =/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         /*
         //Fix for A2-2 - Broken Authentication -  requires stronger password
         //(at least 8 characters with numbers and both lowercase and uppercase letters.)
@@ -218,7 +218,7 @@ function SessionHandler(db) {
 
                     //prepare data for the user
                     prepareUserData(user, next);
-                    /*
+                    
                     sessionDAO.startSession(user._id, function(err, sessionId) {
 
                         if (err) return next(err);
@@ -227,7 +227,7 @@ function SessionHandler(db) {
                         req.session.userId = user._id;
                         return res.render("dashboard", user);
                     });
-                    */
+                    
                     req.session.regenerate(function() {
                         req.session.userId = user._id;
                         // Set userId property. Required for left nav menu links
